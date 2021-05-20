@@ -24,41 +24,33 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 exports.__esModule = true;
-exports.Users = void 0;
+exports.Todos = void 0;
 var typeorm_1 = require("typeorm");
-var Todos_1 = require("./Todos");
-var Users = /** @class */ (function (_super) {
-    __extends(Users, _super);
-    function Users() {
+var Users_1 = require("./Users");
+var Todos = /** @class */ (function (_super) {
+    __extends(Todos, _super);
+    function Todos() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     __decorate([
         typeorm_1.PrimaryGeneratedColumn(),
         __metadata("design:type", Number)
-    ], Users.prototype, "id");
+    ], Todos.prototype, "id");
     __decorate([
         typeorm_1.Column(),
         __metadata("design:type", String)
-    ], Users.prototype, "first_name");
+    ], Todos.prototype, "label");
     __decorate([
         typeorm_1.Column(),
-        __metadata("design:type", String)
-    ], Users.prototype, "last_name");
+        __metadata("design:type", Boolean)
+    ], Todos.prototype, "done");
     __decorate([
-        typeorm_1.Column({ unique: true }),
-        __metadata("design:type", String)
-    ], Users.prototype, "email");
-    __decorate([
-        typeorm_1.Column(),
-        __metadata("design:type", String)
-    ], Users.prototype, "password");
-    __decorate([
-        typeorm_1.OneToMany(function () { return Todos_1.Todos; }, function (todos) { return todos.user; }),
-        __metadata("design:type", Array)
-    ], Users.prototype, "todos");
-    Users = __decorate([
+        typeorm_1.ManyToOne(function () { return Users_1.Users; }, function (user) { return user.todos; }),
+        __metadata("design:type", Users_1.Users)
+    ], Todos.prototype, "user");
+    Todos = __decorate([
         typeorm_1.Entity()
-    ], Users);
-    return Users;
+    ], Todos);
+    return Todos;
 }(typeorm_1.BaseEntity));
-exports.Users = Users;
+exports.Todos = Todos;

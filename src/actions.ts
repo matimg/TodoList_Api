@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { getRepository } from 'typeorm'  // getRepository"  traer una tabla de la base de datos asociada al objeto
 import { Users } from './entities/Users'
 import { Exception } from './utils'
+import { Todos } from './entities/Todos'
 
 export const createUser = async (req: Request, res:Response): Promise<Response> =>{
 
@@ -24,4 +25,21 @@ export const createUser = async (req: Request, res:Response): Promise<Response> 
 export const getUsers = async (req: Request, res: Response): Promise<Response> =>{
 		const users = await getRepository(Users).find();
 		return res.json(users);
+}
+
+export const getTodosByUser = async (req: Request, res: Response): Promise<Response> =>{
+        const todos = await getRepository(Todos);
+        const result = await todos.findOne({ where: {id: req.params.id_user}})
+		return res.json(result);
+}
+
+export const createTodo= async (req: Request, res: Response): Promise<Response> =>{
+       // important validations to avoid ambiguos errors, the client needs to understand what went wrong
+	if(!req.body.label) throw new Exception("Please provide a label")
+	if(!req.body.done) throw new Exception("Please provide a done")
+
+    const todoRepo = getRepository(Todos)
+    const newTodo = getRepository(Todos).create(req.body);  //Creo un todo
+	const results = await getRepository(Todos).save(newTodo); //Grabo el nuevo todo
+	return res.json(results);
 }

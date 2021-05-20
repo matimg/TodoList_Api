@@ -36,10 +36,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.getUsers = exports.createUser = void 0;
+exports.createTodo = exports.getTodosByUser = exports.getUsers = exports.createUser = void 0;
 var typeorm_1 = require("typeorm"); // getRepository"  traer una tabla de la base de datos asociada al objeto
 var Users_1 = require("./entities/Users");
 var utils_1 = require("./utils");
+var Todos_1 = require("./entities/Todos");
 var createUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var userRepo, user, newUser, results;
     return __generator(this, function (_a) {
@@ -81,3 +82,38 @@ var getUsers = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
     });
 }); };
 exports.getUsers = getUsers;
+var getTodosByUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var todos, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos)];
+            case 1:
+                todos = _a.sent();
+                return [4 /*yield*/, todos.findOne({ where: { id: req.params.id_user } })];
+            case 2:
+                result = _a.sent();
+                return [2 /*return*/, res.json(result)];
+        }
+    });
+}); };
+exports.getTodosByUser = getTodosByUser;
+var createTodo = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var todoRepo, newTodo, results;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                // important validations to avoid ambiguos errors, the client needs to understand what went wrong
+                if (!req.body.label)
+                    throw new utils_1.Exception("Please provide a label");
+                if (!req.body.done)
+                    throw new utils_1.Exception("Please provide a done");
+                todoRepo = typeorm_1.getRepository(Todos_1.Todos);
+                newTodo = typeorm_1.getRepository(Todos_1.Todos).create(req.body);
+                return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos).save(newTodo)];
+            case 1:
+                results = _a.sent();
+                return [2 /*return*/, res.json(results)];
+        }
+    });
+}); };
+exports.createTodo = createTodo;
