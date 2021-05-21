@@ -86,18 +86,19 @@ var getTodosByUser = function (req, res) { return __awaiter(void 0, void 0, void
     var todo;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos).findOne(req.params.id_user, { relations: ["user"] })];
+            case 0: return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos).findOne({ where: { user: req.params.id_user }, relations: ["user"] })];
             case 1:
                 todo = _a.sent();
                 if (!todo)
-                    throw new utils_1.Exception("Todo not found", 404);
+                    throw new utils_1.Exception("Not Todo found", 404);
                 return [2 /*return*/, res.json(todo)];
         }
     });
 }); };
 exports.getTodosByUser = getTodosByUser;
+//CREA TODO
 var createTodo = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var todoRepo, newTodo, results;
+    var userRepo, user, todoRepo, todo, newTodo, results;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -106,16 +107,28 @@ var createTodo = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                     throw new utils_1.Exception("Please provide a label");
                 if (!req.body.done)
                     throw new utils_1.Exception("Please provide a done");
-                todoRepo = typeorm_1.getRepository(Todos_1.Todos);
-                newTodo = typeorm_1.getRepository(Todos_1.Todos).create(req.body);
-                return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos).save(newTodo)];
+                userRepo = typeorm_1.getRepository(Users_1.Users);
+                return [4 /*yield*/, userRepo.findOne({ where: { id: req.params.id_user } })];
             case 1:
+                user = _a.sent();
+                if (!!user) return [3 /*break*/, 2];
+                throw new utils_1.Exception("Not User found");
+            case 2:
+                todoRepo = typeorm_1.getRepository(Todos_1.Todos);
+                todo = new Todos_1.Todos();
+                todo.label = req.body.label;
+                todo.done = req.body.done;
+                todo.user = user; //GUARDO RELACION CON USERS
+                newTodo = typeorm_1.getRepository(Todos_1.Todos).create(todo);
+                return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos).save(newTodo)];
+            case 3:
                 results = _a.sent();
                 return [2 /*return*/, res.json(results)];
         }
     });
 }); };
 exports.createTodo = createTodo;
+//MODIFICA TODO
 var updateTodo = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var todoRepo, todo, results;
     return __generator(this, function (_a) {
@@ -123,7 +136,7 @@ var updateTodo = function (req, res) { return __awaiter(void 0, void 0, void 0, 
             case 0:
                 todoRepo = typeorm_1.getRepository(Todos_1.Todos) // I need the userRepo to manage users
                 ;
-                return [4 /*yield*/, todoRepo.findOne(req.params.id_user)];
+                return [4 /*yield*/, todoRepo.findOne({ where: { user: req.params.id_user } })];
             case 1:
                 todo = _a.sent();
                 if (!todo)
@@ -138,6 +151,7 @@ var updateTodo = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 exports.updateTodo = updateTodo;
+//BORRA USUARIO Y TODOS
 var deleteTodosAndUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var user, result;
     return __generator(this, function (_a) {
@@ -146,7 +160,7 @@ var deleteTodosAndUser = function (req, res) { return __awaiter(void 0, void 0, 
             case 1:
                 user = _a.sent();
                 if (!!user) return [3 /*break*/, 2];
-                return [2 /*return*/, res.json("User not found")];
+                throw new utils_1.Exception("Not User found");
             case 2: return [4 /*yield*/, typeorm_1.getRepository(Users_1.Users)["delete"](req.params.id_user)];
             case 3:
                 result = _a.sent();
