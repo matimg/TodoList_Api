@@ -14,11 +14,13 @@ const router = Router();
 
 // signup route, creates a new user in the DB
 router.post('/user', safe(actions.createUser));
-//obtiene todos de un usuario en particular
+//Obtiene todos de un usuario en particular
 router.get('/todos/user/:id_user', safe(actions.getTodosByUser));
-//crea un nuevo todo para un usuario
+//Crea un nuevo todo para un usuario
 router.post('/todos/user/:id_user', safe(actions.createTodo));
-//modifica un todo para un usuario
-//router.put('/todos/user/:id_user', safe(actions.createTodo));
+//Modifica un todo para un usuario
+router.put('/todos/user/:id_user', safe(actions.updateTodo));
+//Elimina un usuario y sus todos
+router.delete('/todos/user/:id_user', safe(actions.deleteTodosAndUser));
 
 export default router;

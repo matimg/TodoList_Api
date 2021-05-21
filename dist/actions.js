@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.createTodo = exports.getTodosByUser = exports.getUsers = exports.createUser = void 0;
+exports.deleteTodosAndUser = exports.updateTodo = exports.createTodo = exports.getTodosByUser = exports.getUsers = exports.createUser = void 0;
 var typeorm_1 = require("typeorm"); // getRepository"  traer una tabla de la base de datos asociada al objeto
 var Users_1 = require("./entities/Users");
 var utils_1 = require("./utils");
@@ -83,16 +83,15 @@ var getUsers = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
 }); };
 exports.getUsers = getUsers;
 var getTodosByUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var todos, result;
+    var todo;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos)];
+            case 0: return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos).findOne(req.params.id_user, { relations: ["user"] })];
             case 1:
-                todos = _a.sent();
-                return [4 /*yield*/, todos.findOne({ where: { id: req.params.id_user } })];
-            case 2:
-                result = _a.sent();
-                return [2 /*return*/, res.json(result)];
+                todo = _a.sent();
+                if (!todo)
+                    throw new utils_1.Exception("Todo not found", 404);
+                return [2 /*return*/, res.json(todo)];
         }
     });
 }); };
@@ -117,3 +116,42 @@ var createTodo = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 exports.createTodo = createTodo;
+var updateTodo = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var todoRepo, todo, results;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                todoRepo = typeorm_1.getRepository(Todos_1.Todos) // I need the userRepo to manage users
+                ;
+                return [4 /*yield*/, todoRepo.findOne(req.params.id_user)];
+            case 1:
+                todo = _a.sent();
+                if (!todo)
+                    throw new utils_1.Exception("Not Todo found");
+                // better to merge, that way we can do partial update (only a couple of properties)
+                todoRepo.merge(todo, req.body);
+                return [4 /*yield*/, todoRepo.save(todo)];
+            case 2:
+                results = _a.sent();
+                return [2 /*return*/, res.json(results)];
+        }
+    });
+}); };
+exports.updateTodo = updateTodo;
+var deleteTodosAndUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, typeorm_1.getRepository(Users_1.Users).findOne(req.params.id_user)];
+            case 1:
+                user = _a.sent();
+                if (!!user) return [3 /*break*/, 2];
+                return [2 /*return*/, res.json("User not found")];
+            case 2: return [4 /*yield*/, typeorm_1.getRepository(Users_1.Users)["delete"](req.params.id_user)];
+            case 3:
+                result = _a.sent();
+                return [2 /*return*/, res.json(result)];
+        }
+    });
+}); };
+exports.deleteTodosAndUser = deleteTodosAndUser;
