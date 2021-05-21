@@ -29,7 +29,7 @@ export const getUsers = async (req: Request, res: Response): Promise<Response> =
 
 export const getTodosByUser = async (req: Request, res: Response): Promise<Response> => {
     // we can pass a second param to the findOne with the extra relations that we need
-    const todo = await getRepository(Todos).findOne({ where: { user: req.params.id_user },  relations: ["user"] });
+    const todo = await getRepository(Todos).find({ where: { user: req.params.id_user }});
     if (!todo) throw new Exception("Not Todo found", 404)
 
     return res.json(todo);
@@ -65,7 +65,7 @@ export const updateTodo = async (req: Request, res: Response): Promise<Response>
     const todoRepo = getRepository(Todos) // I need the userRepo to manage users
 
     // find user by id
-    const todo = await todoRepo.findOne({ where: { user: req.params.id_user } });
+    const todo = await todoRepo.findOne({ where: { user: req.params.id_user, id: req.params.id_todo } });
     if (!todo) throw new Exception("Not Todo found");
 
     // better to merge, that way we can do partial update (only a couple of properties)

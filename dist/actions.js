@@ -86,7 +86,7 @@ var getTodosByUser = function (req, res) { return __awaiter(void 0, void 0, void
     var todo;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos).findOne({ where: { user: req.params.id_user }, relations: ["user"] })];
+            case 0: return [4 /*yield*/, typeorm_1.getRepository(Todos_1.Todos).find({ where: { user: req.params.id_user } })];
             case 1:
                 todo = _a.sent();
                 if (!todo)
@@ -136,7 +136,7 @@ var updateTodo = function (req, res) { return __awaiter(void 0, void 0, void 0, 
             case 0:
                 todoRepo = typeorm_1.getRepository(Todos_1.Todos) // I need the userRepo to manage users
                 ;
-                return [4 /*yield*/, todoRepo.findOne({ where: { user: req.params.id_user } })];
+                return [4 /*yield*/, todoRepo.findOne({ where: { user: req.params.id_user, id: req.params.id_todo } })];
             case 1:
                 todo = _a.sent();
                 if (!todo)

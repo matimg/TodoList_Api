@@ -37,7 +37,7 @@ router.get('/todos/user/:id_user', utils_1.safe(actions.getTodosByUser));
 //Crea un nuevo todo para un usuario
 router.post('/todos/user/:id_user', utils_1.safe(actions.createTodo));
 //Modifica un todo para un usuario
-router.put('/todos/user/:id_user', utils_1.safe(actions.updateTodo));
+router.put('/todos/user/:id_user/:id_todo', utils_1.safe(actions.updateTodo));
 //Elimina un usuario y sus todos
 router["delete"]('/todos/user/:id_user', utils_1.safe(actions.deleteTodosAndUser));
 exports["default"] = router;
